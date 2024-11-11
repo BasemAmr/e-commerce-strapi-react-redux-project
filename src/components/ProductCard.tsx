@@ -1,4 +1,5 @@
-import { Card, Text, Image, Box, Badge, Flex, Button } from "@chakra-ui/react"
+import { Card, Text, Image, Box, Badge, Flex } from "@chakra-ui/react"
+import { Button } from "./ui/button"
 import { Tag, ArrowRight, Folder } from 'lucide-react'
 import { IProduct } from "../interfaces"
 import { useNavigate } from "react-router-dom"

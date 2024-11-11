@@ -2,15 +2,22 @@ import ProductCard from "../components/ProductCard"
 import ProductCardSkeleton from "../components/ProductCardSkeleton"
 import { Grid, Box, Heading, Container, Text } from "@chakra-ui/react"
 import { useColorModeValue } from "@chakra-ui/color-mode"
-import axios from "axios"
 import { IProduct } from "../interfaces"
 import { useQuery } from "react-query"
+import { instance } from "../axios/axios.config"
+import CookiesService from "../services/cookies"
 
 const ProductsPage = () => {
-    const SERVER_URL = import.meta.env.VITE_SERVER_URL
     
     const fetchProducts = async () => {
-        const {data} = await axios.get(`${SERVER_URL}/api/products?populate=*`)
+        const {data} = await instance.get(`/api/products?populate=*`,
+        {
+            headers: {
+                'Authorization': `Bearer ${CookiesService.getCookie('jwt')}`,
+              }
+        }
+        )
+        console.log(data)
         return data
     }
     

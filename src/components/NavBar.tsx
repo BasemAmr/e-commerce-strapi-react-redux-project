@@ -11,8 +11,9 @@ import {
 import { NavLink } from "react-router-dom";
 import { Menu, X, ShoppingCart, Home, Package, LogIn, UserPlus } from "lucide-react";
 import CookiesService from "../services/cookies";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../app/store";
+import { openCartDrawer } from "../app/features/globalSlice";
 
 const NavBar = () => {
     const { open, onToggle } = useDisclosure();
@@ -22,8 +23,12 @@ const NavBar = () => {
     // Logout handler
     const logoutHandler = () => {
         CookiesService.removeCookie('jwt');
+        console.log('Logged out');
         window.location.reload();
     }
+
+    // Dispatch for opening the cart drawer
+    const dispatch = useDispatch();
 
     return (
         <Box 
@@ -155,6 +160,7 @@ const NavBar = () => {
                             color="white"
                             variant="ghost"
                             _hover={{ bg: "blue.500" }}
+                            onClick={() => dispatch(openCartDrawer())}
                         >
                             <ShoppingCart size={20} /> Cart {items.length > 0 && `(${items.length})`}
                         </Button>

@@ -1,19 +1,26 @@
 import { Button, Card, Flex, Heading, Text, Image, Box, Container } from "@chakra-ui/react"
-import axios from "axios"
 import { useQuery } from "react-query"
 import { ArrowLeft, Folder } from 'lucide-react'
 import ProductDetailsSkeleton from "../components/ProductDetailsSkeleton"
 import { AppDispatch } from "../app/store"
 import { useDispatch } from "react-redux"
 import { addItem } from "../app/features/cartSlice"
-
+import { instance } from "../axios/axios.config"
+import CookiesService from "../services/cookies"
 const ProductDetailsPage = () => {
     const VITE_SERVER_URL = import.meta.env.VITE_SERVER_URL
     const documentId = window.location.pathname.split("/")[2]
     
     const fetchProduct = async () => {
-        const { data } = await axios.get(`${VITE_SERVER_URL}/api/products/${documentId}?populate=*`)
+        const { data } = await instance.get(`${VITE_SERVER_URL}/api/products/${documentId}?populate=*`, 
+        {
+            headers: {
+                'Authorization': `Bearer ${CookiesService.getCookie('jwt')}`
+            }
+        })
+        
         return data.data
+        
     }
     const { isLoading, data } = useQuery('product', () => fetchProduct())
 
@@ -24,10 +31,12 @@ const ProductDetailsPage = () => {
     const addToCartHandler = () => {
         const productData = {
             id: data.id,
+            documentId: data.docuemntId,
             title: data.title,
             description: data.description,
             price: data.price,
             stock: data.stock,
+            discount: data.discount,
             thumbnail: {
                 url: data.thumbnail.url,
                 alternativeText: data.thumbnail.alternativeText

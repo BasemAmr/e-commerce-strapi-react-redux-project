@@ -2,14 +2,10 @@ import { createSlice } from '@reduxjs/toolkit';
 
 interface IInitialState {
     isOpenCartDrawer: boolean;
-    openCartDrawer: () => void;
-    closeCartDrawer: () => void;
 }
 
 const initialState: IInitialState = {
-    isOpenCartDrawer: false,
-    openCartDrawer: () => {},
-    closeCartDrawer: () => {},
+    isOpenCartDrawer: false
 };
 
 const globalSlice = createSlice({
@@ -22,12 +18,8 @@ const globalSlice = createSlice({
         closeCartDrawer: (state) => {
             state.isOpenCartDrawer = false;
         },
-        isOpenCartDrawer: (state) => {
-            state.isOpenCartDrawer = !state.isOpenCartDrawer;
-        }
     },
 });
 
-
-export const { openCartDrawer, closeCartDrawer, isOpenCartDrawer } = globalSlice.actions;
+export const { openCartDrawer, closeCartDrawer } = globalSlice.actions;
 export default globalSlice;

@@ -1,49 +1,48 @@
-import { Card, Skeleton, Flex, Box } from '@chakra-ui/react';
-
+import { Box,  Flex, Skeleton } from "@chakra-ui/react"
+import { SkeletonText } from "./ui/skeleton"
 const ProductDetailsSkeleton = () => {
     return (
-        <Card.Root
-            maxW="sm"
+        <Box
+            maxW="4xl"
             overflow="hidden"
-            bg="purple.100"
-            borderRadius="lg"
+            bg="white"
+            borderRadius="xl"
             border="1px solid"
+            borderColor="gray.200"
             padding="2rem"
-            boxShadow="xl"
+            boxShadow="sm"
             m="auto"
         >
-            <Card.Header>
-                <Skeleton
-                    height="300px"
-                    borderRadius="lg"
-                    border="4px solid"
-                    borderColor="purple.400"
-                />
-            </Card.Header>
-            <Card.Body gap={4}>
-                <Skeleton height="2.5rem" mb={4} />
-                <>
-                    <Skeleton height="1rem" mb={2} />
-                    <Skeleton height="1rem" mb={2} />
-                    <Skeleton height="1rem" mb={2} />
-                </>
-                <Flex gap={4} align="center">
-                    <Box>
-                        <Skeleton height="1.5rem" width="80px" mb={2} />
-                        <Skeleton height="2rem" width="100px" />
-                    </Box>
-                    <Skeleton height="1.5rem" width="100px" />
-                </Flex>
-            </Card.Body>
-            <Card.Footer p={4}>
-                <Skeleton
-                    height="2.5rem"
-                    width="100%"
-                    borderRadius="md"
-                />
-            </Card.Footer>
-        </Card.Root>
-    );
-};
+            <Flex direction={{ base: 'column', md: 'row' }} gap={8}>
+                <Box flex="1">
+                    <Skeleton
+                        height="400px"
+                        borderRadius="lg"
+                    />
+                </Box>
 
-export default ProductDetailsSkeleton;
+                <Box flex="1" display="flex" flexDirection="column" gap={4}>
+                    <Skeleton height="40px" width="70%" />
+                    
+                    <SkeletonText
+                        noOfLines={4}
+                        gap={4}
+                        height={4}
+                    />
+
+                    <Box mt={4}>
+                        <Skeleton height="20px" width="150px" mb={2} />
+                        <Skeleton height="30px" width="120px" />
+                    </Box>
+
+                    <Flex gap={4} mt={8}>
+                        <Skeleton height="40px" flex={1} />
+                        <Skeleton height="40px" width="100px" />
+                    </Flex>
+                </Box>
+            </Flex>
+        </Box>
+    )
+}
+
+export default ProductDetailsSkeleton

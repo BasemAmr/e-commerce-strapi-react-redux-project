@@ -1,5 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
-import loginSlice from './features/loginSlice';
+import persistedAuthReducer from './features/loginSlice';
 import cartSlice from './features/cartSlice';
 import globalSlice from './features/globalSlice';
 import { 
@@ -14,6 +14,7 @@ import {
 } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import apiSlice from './services/apiSlice';
+import userApi from './services/userApi';
 
 const persistConfig = {
   key: 'root',
@@ -24,10 +25,11 @@ const persistedCart = persistReducer(persistConfig, cartSlice.reducer);
 
 export const store = configureStore({
   reducer: {
-    auth: loginSlice,
+    auth: persistedAuthReducer,
     cart: persistedCart,
     global: globalSlice.reducer,
     [apiSlice.reducerPath]: apiSlice.reducer,
+    [userApi.reducerPath]: userApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
@@ -35,7 +37,8 @@ export const store = configureStore({
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
 
-    }).concat(apiSlice.middleware),
+    }).concat(apiSlice.middleware)
+    .concat(userApi.middleware),
 
     
 });

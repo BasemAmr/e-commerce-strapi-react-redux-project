@@ -4,9 +4,9 @@ import { Tooltip } from '../ui/tooltip';
 import { Eye, Pencil, Trash } from 'lucide-react';
 
 interface ProductTableActionsProps {
-    onView: () => void;
+    onView?: () => void;
     onEdit: () => void;
-    onDelete: () => void;
+    onDelete?: () => void;
     isDeleting?: boolean;
 }
 
@@ -18,18 +18,6 @@ export const ProductTableActions: FC<ProductTableActionsProps> = ({
 }) => {
     return (
         <HStack gap={2}>
-            <Tooltip  openDelay={100} content="View Product" showArrow >
-                <IconButton
-                    aria-label="View product"
-                    variant="ghost"
-                    colorPalette="blue"
-                    size="sm"
-                    onClick={onView}
-                >
-                    <Eye size={18} />
-                </IconButton>
-            </Tooltip>
-
             <Tooltip openDelay={100} content="Edit Product" showArrow >
                 <IconButton
                     aria-label="Edit product"
@@ -41,20 +29,40 @@ export const ProductTableActions: FC<ProductTableActionsProps> = ({
                     <Pencil size={18} />
                 </IconButton>
             </Tooltip>
+            {
+                onView && (
+                    <Tooltip openDelay={100} content="View Product" showArrow >
+                        <IconButton
+                            aria-label="View product"
+                            variant="ghost"
+                            colorPalette="blue"
+                            size="sm"
+                            onClick={onView}
+                        >
+                            <Eye size={18} />
+                        </IconButton>
+                    </Tooltip>
+                )
+            }
+            {
+                onDelete && (
+                    <Tooltip openDelay={100} content="Delete Product" showArrow >
+                        <IconButton
+                            aria-label="Delete product"
+                            variant="ghost"
+                            colorPalette="red"
+                            size="sm"
+                            onClick={onDelete}
+                        >
+                            {
+                                isDeleting ? <Spinner size="xs" /> : <Trash size={18} />
+                            }
+                        </IconButton>
+                    </Tooltip>
+                )
 
-            <Tooltip openDelay={100} content="Delete Product" showArrow >
-                <IconButton
-                    aria-label="Delete product"
-                    variant="ghost"
-                    colorPalette="red"
-                    size="sm"
-                    onClick={onDelete}
-                >
-                    {
-                        isDeleting ? <Spinner size="xs" /> : <Trash size={18} />
-                    }
-                </IconButton>
-            </Tooltip>
+            }
+
         </HStack>
     );
 };

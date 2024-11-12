@@ -23,7 +23,9 @@ import { LOGIN_FORM_FIELDS } from "../data";
 
 import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from "../app/store";
-import { login } from "../app/features/loginSlice";
+import { fetchUserRole, login } from "../app/features/loginSlice";
+
+import CookiesService from "../services/cookies";
 
 interface LoginFormValues {
     identifier: string;
@@ -52,8 +54,12 @@ const LoginPage = () => {
     const formValues = useWatch({ control });
 
 
-    const onSubmit = (data: LoginFormValues) => {
-        dispatch(login(data));
+    const onSubmit = async (data: LoginFormValues) => {
+        const resultAction = await dispatch(login(data));
+        if (login.fulfilled.match(resultAction)) {
+            dispatch(fetchUserRole(CookiesService.getCookie('jwt') as string));  
+        }
+
     };
 
 

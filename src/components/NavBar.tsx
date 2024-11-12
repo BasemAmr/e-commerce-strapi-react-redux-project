@@ -10,10 +10,11 @@ import {
 } from "@chakra-ui/react";
 import { NavLink } from "react-router-dom";
 import { Menu, X, ShoppingCart, Home, Package, LogIn, UserPlus } from "lucide-react";
-import CookiesService from "../services/cookies";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../app/store";
 import { openCartDrawer } from "../app/features/globalSlice";
+import CookiesService from "../services/cookies"; 
+import { logout } from "../app/features/loginSlice";
 
 const NavBar = () => {
     const { open, onToggle } = useDisclosure();
@@ -21,14 +22,14 @@ const NavBar = () => {
     const { items } = useSelector((state: RootState) => state.cart);
 
     // Logout handler
-    const logoutHandler = () => {
-        CookiesService.removeCookie('jwt');
+    const dispatch = useDispatch();
+
+    const logoutHandler = async () => {
+         await dispatch(logout());
         console.log('Logged out');
-        window.location.reload();
     }
 
     // Dispatch for opening the cart drawer
-    const dispatch = useDispatch();
 
     return (
         <Box 

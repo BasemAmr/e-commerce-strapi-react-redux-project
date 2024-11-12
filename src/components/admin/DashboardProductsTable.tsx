@@ -3,13 +3,13 @@ import { FC, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {  AlertDialog } from '../AlertDialog'
 import { useGetProductsQuery, useRemoveProductMutation, useUpdateProductMutation } from '../../app/services/apiSlice';
-import { ProductTableHeader } from './ProductTableHeader';
-import { ProductTableRow } from './ProductTableRow';
+import { DashboardTableHeader } from './DashboardTableHeader';
+import { DashboardTableRow } from './DashboardTableRow.tsx';
 import { ErrorState } from './ErrorState';
 import { IProduct, UpdateProductRequest } from '../../interfaces';
 import DashboardTableSkeleton from './DashboardTableSkeleton';
 import { ProductEditDialog } from './ProductEditDialog';
-
+import { productColumns } from '../../data/tableConfig.tsx';
 
 const DashboardProductsTable: FC = () => {
   const [page, setPage] = useState(1);
@@ -23,6 +23,7 @@ const DashboardProductsTable: FC = () => {
     page, 
     pageSize: 10 
   });
+  console.log(data)
   
   const [removeProduct] = useRemoveProductMutation();
   const [updateProduct] =  useUpdateProductMutation();
@@ -49,18 +50,26 @@ const DashboardProductsTable: FC = () => {
     }
   };
 
+
   return (
     <>
       <Table.Root>
-        <ProductTableHeader />
+        <DashboardTableHeader 
+          columns={productColumns}
+          // onSort={handleSort}
+          // currentSort={currentSort}
+        />
         <Table.Body>
           {data?.data.map((product: IProduct) => (
-            <ProductTableRow
+            <DashboardTableRow
               key={product.id}
-              product={product}
-              onView={() => navigate(`/products/${product.documentId}`)}
-              onEdit={() => setSelectedProduct(product)}
-              onDelete={() => setSelectedId(product?.documentId)}
+              data={product}
+              columns={productColumns}
+              actionTriggers={{
+                onView: () => navigate(`/products/${product.documentId}`),
+                onEdit: () => setSelectedProduct(product),
+                onDelete: () => setSelectedId(product?.documentId),
+              }}
             />
           ))}
         </Table.Body>

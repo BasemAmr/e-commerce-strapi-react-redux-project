@@ -1,19 +1,23 @@
 import { Navigate } from 'react-router-dom';
 import { ReactNode } from 'react';
+import { RootState } from '../app/store';
+import { useSelector } from 'react-redux';
 
 interface ProtectedRouteProps {
-    children: ReactNode;
-    isAuthenticated: boolean;
+  children: ReactNode;
 }
 
-const ProtectedRoute = ({ children, isAuthenticated }: ProtectedRouteProps) => {
-    if (!isAuthenticated) {
-        // Redirect to login if user is not authenticated
-        return <Navigate to="/login" replace />;
-    }
+const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
 
-    // Render children if user is authenticated
-    return <>{children}</>;
+  const { role } = useSelector((state: RootState) => state.auth);
+
+  const isAuthenticated = role !== 'guest';
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return <>{children}</>;
 };
 
 export default ProtectedRoute;

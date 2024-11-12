@@ -3,11 +3,10 @@ import { toaster } from './../../components/ui/toaster';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { instance } from '../../axios/axios.config';
-import CookiesService from '../../services/cookies';
 import { IErrorResponse } from '../../interfaces';
 import { persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
-
+import CookiesService from '../../services/cookies';
 
 interface LoginResponse {
     jwt: string;
@@ -32,6 +31,21 @@ const initialState: AuthState = {
 };
 
 
+
+// New thunk for fetching user role
+export const fetchUserRole = createAsyncThunk(
+  'auth/fetchUserRole',
+  async (token: string) => {
+    const response = await instance.get('/api/users/me?populate=*', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data.role.type as UserRole;
+  }
+);
+
+
 export const login = createAsyncThunk(
   'auth/login',
   async (data: { identifier: string; password: string }, { rejectWithValue }) => {
@@ -53,19 +67,26 @@ const loginSlice = createSlice({
   initialState,
   reducers: {
     logout: (state) => {
+      CookiesService.removeCookie('jwt');
       state.user = null;
       state.role = 'guest';
       state.isAuthenticated = false;
       state.status = 'idle';
-      CookiesService.removeCookie('jwt');
+
+      toaster.create({
+        description: 'Logged out',
+        type: 'success',
+        duration: 2000
+      });
+      
     },
-    updateUserRole: (state, action: PayloadAction<UserRole>
-     ) => {
-      if (state.user) {
-        state.user.role = action.payload;
-        state.role = action.payload;
-      }
-    } 
+    // updateUserRole: (state, action: PayloadAction<UserRole>
+    //  ) => {
+    //   if (state.user) {
+    //     state.user.role = action.payload;
+    //     state.role = action.payload;
+    //   }
+    // } 
   },
   extraReducers: (builder) => {
     builder
@@ -75,34 +96,22 @@ const loginSlice = createSlice({
 
       })
       .addCase(login.fulfilled, (state, action) => {
+        CookiesService.setCookie('jwt', action.payload.jwt, { path: '/' });
         state.status = 'succeeded';
         state.user = action.payload.user;
-        state.role = action.payload.user.role;
         state.isAuthenticated = true;
-        state.error = null;
-
-        // Set JWT cookie
-        const EXPIRE_IN = new Date(new Date().getTime() + 24 * 60 * 60 * 1000);
-        CookiesService.setCookie('jwt', action.payload.jwt, {
-          expires: EXPIRE_IN,
-          path: '/'
-        });
-
-        toaster.create({
-          description: 'Login successful',
-          type: 'success',
-          duration: 2000
-        });
-
-       setTimeout(() => {
-          window.location.href = action.payload.user.role === 'admin' 
-            ? '/admin' 
-            : '/';
-        }, 1000);
-
+      })
+      .addCase(fetchUserRole.fulfilled, (state, action) => {
+          state.role =  action.payload;
+          window.location.href = '/admin';
+      })
+      .addCase(fetchUserRole.rejected, (state) => {
+        state.role = state.user ? 'authenticated' : 'guest'; 
+        window.location.href = '/';
 
       })
       .addCase(login.rejected, (state, action) => {
+        state.user = null;
         state.error = action.error.message || null;
         state.isAuthenticated = false;
         state.status = 'failed';
@@ -122,6 +131,6 @@ const persistConfig = {
   whitelist: ['user', 'role', 'isAuthenticated']
 };
 
-export const { logout, updateUserRole } = loginSlice.actions;
+export const { logout, } = loginSlice.actions;
 export const persistedAuthReducer = persistReducer(persistConfig, loginSlice.reducer);
 export default persistedAuthReducer;

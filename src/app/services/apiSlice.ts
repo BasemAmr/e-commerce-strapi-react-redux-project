@@ -30,12 +30,15 @@ export const apiSlice = createApi({
         
       }),
       providesTags: (result) =>
-        result
+        {
+          console.log(result)
+          
+          return result
           ? [
               ...result.data.map(({ documentId }) => ({ type: 'Products' as const, documentId })),
               { type: 'Products', documentId: 'LIST' },
             ]
-          : [{ type: 'Products', documentId: 'LIST' }],
+          : [{ type: 'Products', documentId: 'LIST' }]},
       
     }),
     
@@ -121,10 +124,7 @@ export const apiSlice = createApi({
           invalidatesTags: (result, error, { documentId }) => 
             [{ type: 'Products', documentId }],
         }),
-    
-        // Other endpoints...
-      }),
-    });
-
+  }),
+});
 export const { useGetProductsQuery, useRemoveProductMutation, useUpdateProductMutation, useUploadFileMutation } = apiSlice;
 export default apiSlice;

@@ -12,7 +12,7 @@ import {
 } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import { useColorModeValue } from "@chakra-ui/color-mode";
-import { Home, PackageSearch, LayoutGrid, LayoutDashboard, Menu } from "lucide-react";
+import { Home, PackageSearch,  LayoutDashboard, Menu, User } from "lucide-react";
 import AdminNavBar from "../../components/admin/AdminNavBar";
 import {
   DrawerRoot,
@@ -23,6 +23,9 @@ import {
   DrawerTitle,
   DrawerCloseTrigger,
 } from "../../components/ui/drawer";
+import { Button } from "../../components/ui/button";
+import { useDispatch } from "react-redux";
+import { logout } from "../../app/features/loginSlice";
 
 type NavItem = {
   text: string;
@@ -33,8 +36,10 @@ type NavItem = {
 const navItems: NavItem[] = [
   { text: "Home", icon: <Home size={20} />, path: "/admin" },
   { text: "Products", icon: <PackageSearch size={20} />, path: "/admin/products" },
-  { text: "Categories", icon: <LayoutGrid size={20} />, path: "/admin/categories" },
+  { text: "Users", icon: <User size={20} />, path: "/admin/users" },
 ];
+
+
 
 const NavListItem = ({ icon, text }: NavItem) => {
   const hoverBg = useColorModeValue("gray.100", "gray.700");
@@ -60,9 +65,19 @@ const NavListItem = ({ icon, text }: NavItem) => {
   );
 };
 
-const Sidebar = () => {
+
+const Sidebar = ({isMobile} : 
+  {isMobile : boolean}
+) => {
   const bgColor = useColorModeValue("white", "gray.800");
   
+  const dispatch = useDispatch();
+
+  const logoutHandler = async () => {
+    await dispatch(logout());
+    console.log('Logged out');
+  }
+
   return (
     <Box
       bg={bgColor}
@@ -83,6 +98,10 @@ const Sidebar = () => {
             <NavListItem icon={item.icon} text={item.text} />
           </Link>
         ))}
+        {isMobile && (
+          <Button variant="ghost" colorPalette={"red"} onClick={logoutHandler}>
+            Logout
+          </Button>)}
       </VStack>
     </Box>
   );
@@ -97,10 +116,13 @@ const AdminLayout = () => {
     const borderColor = useColorModeValue("gray.200", "gray.700");
   return (
     <Box minH="100vh" bg={bgColor}>
-      <AdminNavBar />
+      {
+        !isMobile && <AdminNavBar />
+      }
       
       <Flex>
         {!isMobile ? (
+          <>
           <Box
             w={sidebarWidth}
             h="calc(100vh - 60px)"
@@ -109,8 +131,11 @@ const AdminLayout = () => {
             borderRight="1px"
             borderColor={borderColor}
           >
-            <Sidebar />
+            <Sidebar isMobile={
+              false
+            } />
           </Box>
+          </>
         ) : (
           <>
             <IconButton
@@ -142,7 +167,9 @@ const AdminLayout = () => {
                   </DrawerCloseTrigger>
                 </DrawerHeader>
                 <DrawerBody p={0}>
-                  <Sidebar />
+                  <Sidebar isMobile={
+                    true
+                  } />
                 </DrawerBody>
               </DrawerContent>
             </DrawerRoot>

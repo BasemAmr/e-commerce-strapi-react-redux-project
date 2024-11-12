@@ -1,9 +1,18 @@
 import { useDisclosure, Flex, IconButton, Stack, Button,Box, Container , Text} from "@chakra-ui/react";
 import {  X, Menu } from "lucide-react";
-import { NavLink } from "react-router-dom";
+import { logout } from "../../app/features/loginSlice";
+import { useDispatch } from "react-redux";
 
 const AdminNavBar = () => {
     const { open, onToggle } = useDisclosure();
+
+    const dispatch = useDispatch();
+
+    const logoutHandler = async () => {
+         await dispatch(logout());
+        console.log('Logged out');
+    }
+
 
     return (
         <Box position="sticky" top={0} zIndex={10} bg="white" boxShadow="sm">
@@ -26,12 +35,7 @@ const AdminNavBar = () => {
                         flex={{ base: 1, md: "auto" }}
                         mt={{ base: 4, md: 0 }}
                     >
-                        <NavLink to="/admin/login">
-                            <Button variant="ghost">Login</Button>
-                        </NavLink>
-                        <NavLink to="/admin/logout">
-                            <Button variant="ghost">Logout</Button>
-                        </NavLink>
+                        <Button variant="ghost" onClick={logoutHandler}>Logout</Button>
                     </Stack>
                         <IconButton
                             aria-label="Toggle Navigation"

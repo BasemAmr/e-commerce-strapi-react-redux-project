@@ -84,18 +84,32 @@ const ProductCard = ({ props }: ProductCardProps) => {
               textAlign="left"
               p={2}
             >
-              ${price}
-              {discount > 0 && (
-                <Text
-                  as="span"
-                  fontSize="sm"
-                  textDecoration="line-through"
-                  color="gray.400"
-                  ml={2}
-                >
-                  ${price * (1 + discount/100)}
-                </Text>
-              )}
+              {discount ? (
+                                <Flex align="center" gap={3}>
+                                    <Text
+                                        fontSize="lg"
+                                        textDecoration="line-through"
+                                        color="gray.400"
+                                    >
+                                        ${price}
+                                    </Text>
+                                    <Text 
+                                        fontSize="2xl"
+                                        fontWeight="bold"
+                                        color="blue.600"
+                                    >
+                                        ${price - (price * discount / 100)}
+                                    </Text>
+                                </Flex>
+                            ) : (
+                                <Text 
+                                    fontSize="2xl"
+                                    fontWeight="bold"
+                                    color="blue.600"
+                                >
+                                    ${price}
+                                </Text>
+                            )}
             </Text>
           </Card.Body>
 

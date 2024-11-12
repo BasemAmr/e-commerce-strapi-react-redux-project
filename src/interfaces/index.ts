@@ -76,6 +76,8 @@ export interface ProductResponse {
   };
 }
 
+
+
 export interface ProductFormData {
   title: string;
   description: string;
@@ -104,12 +106,26 @@ export interface UpdateProductResponse {
   data: IProduct;
 }
 
-export type UserRole = 'admin' | 'user' | 'guest';
+export type UserRole = 'admin' | 'authenticated' | 'guest';
 
 export interface AuthUser {
   id: number;
-  email: string;
+  documentId: string;
   username: string;
-  role: UserRole;
-  jwt: string;
+  email: string;
+  role: {
+    type: UserRole;
+  }
+}
+
+
+// types/table.ts
+export interface ColumnDef<T> {
+  key: keyof T;
+  label: string;
+  render?: (value: any) => React.ReactNode;
+}
+
+export interface TableConfig<T> {
+  columns: ColumnDef<T>[];
 }

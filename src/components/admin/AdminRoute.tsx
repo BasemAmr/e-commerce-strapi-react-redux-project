@@ -1,16 +1,17 @@
-import { useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
-import { RootState } from "../../app/store";
 import { FC, ReactNode } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "../../app/store";
 
-// components/AdminRoute.tsx
 export const AdminRoute: FC<{ children: ReactNode }> = ({ children }) => {
-    const { role } = useSelector((state: RootState) => state.auth);
-    
-    if (role !== 'admin') {
-      return <Navigate to="/login" replace />;
-    }
-  
-    return <>{children}</>;
-  };
-  
+
+  const { role } = useSelector((state: RootState) => state.auth);
+
+  const isAdmin = role === "admin";
+
+  if (!isAdmin) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return <>{children}</>;
+};
